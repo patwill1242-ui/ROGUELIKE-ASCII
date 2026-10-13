@@ -1,12 +1,14 @@
-import os
+import os, random
 
 run = True
 menu = True
 play = False
 rules = False
 
-HP = 50 
-ATK = 3
+seed = 0
+level = 0
+rand = 0
+name = ""
 
 def draw():
     print("XX--------------------XX")
@@ -15,16 +17,15 @@ def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
 
 def save():
-    list = [
+    data = [
         name,
-        str(HP),
-        str(ATK)
+        str(seed),
+        str(level),
+        str(rand)
     ]
-    f= open("load.txt","w")
-
-    for item in list:
-        f.write(item + "\n")
-    f.close()    
+    with open("load.txt", "w") as f:
+        for item in data:
+            f.write(item + "\n")
 
 while run:
     while menu:
@@ -38,39 +39,75 @@ while run:
 
         if rules:
             print("im the creator of this simple game")
-            rules =False
-            choice=""
+            rules = False
+            choice = ""
             input(">")
         else:    
             choice = input("#")
 
         if choice == "1":
             clear()
-            name=input("what is your name player? ")
+            name = input("what is your name player? ")
+            op = input("did you have a seed? ").strip().lower()
+            
+            if op == "yes":
+                valid = False
+                while not valid:
+                    try:
+                        seed_input = int(input("insert seed: "))
+                        if seed_input % 10 != 0 and len(str(abs(seed_input))) == 5:
+                            seed = seed_input
+                            valid = True
+                        else:
+                            print("seed not valid")
+                    except ValueError:
+                        print("insert a valid number")
+            else:
+                seed = random.randint(10000, 99999)
+                while seed % 10 == 0:
+                    seed = random.randint(10000, 99999)
+            
+            level = 0
+            rand = seed
             menu = False
             play = True
+            
         elif choice == "2":
-            f = open("load.txt","r")
-            load_list = f.readlines()
-            name = load_list[0][:-1]
-            HP = load_list[1][-1]
-            ATK = load_list[2][-1]
-            clear()
-            print("Welcome back ",name)
-            input(">")
-            menu = False
-            play = True
+            try:
+                with open("load.txt", "r") as f:
+                    load_list = f.readlines()
+                
+                if len(load_list) >= 4:
+                    name = load_list[0].strip()
+                    seed = int(load_list[1].strip())
+                    level = int(load_list[2].strip())
+                    rand = int(load_list[3].strip())
+                    
+                    clear()
+                    print("Welcome back ", name)
+                    input(">")
+                    menu = False
+                    play = True
+                else:
+                    print("Corrupt save file")
+                    input(">")
+            except (OSError, ValueError):
+                print("No loadble save file")
+                input(">")
+
         elif choice == "3":
             rules = True
+
         elif choice == "4":
-            quit()
+            exit()
 
     while play:
-        save()  #autosave
+        save()
 
         clear()
         draw()
-        print("0. SAVE AND QUIT" )
+        print("0. SAVE AND QUIT")
+        print("1. NEXT LEVEL")
         draw() 
 
         dest = input("#")
@@ -78,4 +115,19 @@ while run:
         if dest == "0":
             play = False 
             menu = True
-            save()
+
+        elif dest == "1":
+            clear()
+            level += 1
+            draw()
+            print("LEVEL ", level)
+            
+            if level == 1:
+                rand = seed
+            else:
+                temp = str(rand ** 2).zfill(8)
+                rand = int(temp[2:6])
+                
+            print("n:", rand)
+            draw()
+            input(">")
