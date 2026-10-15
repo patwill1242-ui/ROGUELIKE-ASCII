@@ -79,8 +79,20 @@ def win_decision(number, even_or_odd):
         input(">")
         return False
         
-    
+def print_title():
+    print(r"""
+______ _____ _____ _   _ _____ ___  ___  ___ _____ _   _ 
+| ___ \  _  |  __ \ | | |  ___|  \/  | / _ \_   _| | | |
+| |_/ / | | | |  \/ | | | |__ | .  . |/ /_\ \| | | |_| |
+|    /| | | | | __| | | |  __|| |\/| ||  _  || | |  _  |
+| |\ \\ \_/ / \__/\ |_| | |___| |  | || | | || | | | | |
+\_| \_|\___/ \____/\___/\____/\_|  |_/\_| |_/\_/ \_| |_/
+    """)    
+    print("                             Made by Patricks Williams")
 
+clear()
+print_title()
+input("\n\n>")
 while run:
     while menu:
         clear()
